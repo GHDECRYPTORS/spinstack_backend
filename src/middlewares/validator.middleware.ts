@@ -13,7 +13,7 @@ function ValidatorMiddleware(
     validate(dtoObj, { skipMissingProperties }).then(
       (errors: ValidationError[]) => {
         if (errors.length > 0) {
-          const dtoErrors = "Invalid data";
+          const dtoErrors = "Some data supplied were not accepted";
           next(
             new HttpException(
               400,

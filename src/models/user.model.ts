@@ -2,6 +2,7 @@ import * as mongoose from "mongoose";
 const bcrypt = require("bcrypt"),
   Schema = mongoose.Schema;
 
+import * as jwt from "jsonwebtoken";
 /**
  * User Schema
  */
@@ -39,12 +40,34 @@ UserSchema.methods.comparePassword = function (password: string) {
   return bcrypt.compareSync(password, this.hash_password);
 };
 
+UserSchema.methods.showDetails = function () {
+  return {
+    _id: this._id,
+    full_name: this.full_name,
+    email: this.email,
+    business_id: this.business_id,
+  };
+};
+
+UserSchema.methods.login = function (message:string) {
+  return {
+    message,
+    token: jwt.sign(
+      { email: this.email, full_name: this.full_name, _id: this._id },
+      process.env.JWT_SECRET as string
+    ),
+    user: this.showDetails(),
+  };
+};
+
 export type UserDocument = mongoose.Document & {
   full_name: string;
   email: string;
   hash_password?: string;
   business_id: string;
   comparePassword: (password: string) => boolean;
+  showDetails: () => object;
+  login(message:string): object;
 };
 
 export const User = mongoose.model("User", UserSchema);

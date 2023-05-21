@@ -1,10 +1,10 @@
 import { Application } from "express";
-import { register } from "../controllers/auth.controller";
+import { register,login } from "../controllers/auth.controller";
 import express from "express";
 import ValidatorMiddleware from "../middlewares/validator.middleware";
 import { RegisterDto } from "../dto/register.dto";
+import { LoginDto } from "../dto/login.dto";
 const authRouter = express.Router();
 authRouter.route("/register").post(ValidatorMiddleware(RegisterDto), register);
+authRouter.route("/login").post(ValidatorMiddleware(LoginDto), login);
 export default authRouter;
-//   app.route("/auth/register").post(userHandlers.register);
-//   app.route("/auth/sign_in").post(userHandlers.sign_in);

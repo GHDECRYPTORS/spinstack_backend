@@ -12,9 +12,8 @@ export class LoginDto {
   email: string;
 
   @IsNotEmpty()
-  @Length(1, 8, {
-    message:
-      "password must be longer than or equal to 1 and shorter than or equal to 8 characters",
+  @Length(8, 256, {
+    message: "password must be at least 8 characters",
   })
   password: string;
 }
