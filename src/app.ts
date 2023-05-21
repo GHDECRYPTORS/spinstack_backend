@@ -1,15 +1,19 @@
-import express from 'express';
-import morgan from 'morgan';
-import helmet from 'helmet';
-import cors from 'cors';
-
 import * as middlewares from './middlewares';
-import api from './api';
+import * as mongoose from "mongoose"
 import MessageResponse from './interfaces/MessageResponse';
+import api from './api';
+import cors from 'cors';
+import express from 'express';
+import helmet from 'helmet';
+import morgan from 'morgan';
 
 require('dotenv').config();
 
 const app = express();
+mongoose.connect(process.env.MONGO_URI as string).then(() => {
+  console.log("Connected to Database");
+});
+mongoose.set("debug", process.env.NODE_ENV!="production")
 
 app.use(morgan('dev'));
 app.use(helmet());

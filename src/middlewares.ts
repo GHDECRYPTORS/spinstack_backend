@@ -1,6 +1,7 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, Response } from "express";
 
-import ErrorResponse from './interfaces/ErrorResponse';
+import ErrorResponse from "./interfaces/ErrorResponse";
+import { HttpException } from "./exceptions/http.exception";
 
 export function notFound(req: Request, res: Response, next: NextFunction) {
   res.status(404);
@@ -9,11 +10,23 @@ export function notFound(req: Request, res: Response, next: NextFunction) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function errorHandler(err: Error, req: Request, res: Response<ErrorResponse>, next: NextFunction) {
-  const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
-  res.status(statusCode);
+export function errorHandler(
+  err: Error | HttpException,
+  req: Request,
+  res: Response<ErrorResponse>,
+  next: NextFunction
+) {
+  let statusCode = res.statusCode !== 200 ? res.statusCode : 500;
+  if (err instanceof HttpException) {
+    res.status(err.status);
+    statusCode = err.status;
+  } else {
+    res.status(statusCode);
+  }
   res.json({
     message: err.message,
-    stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack,
+    // stack: process.env.NODE_ENV === "production" ? "🥞" : err.stack,
+    status: statusCode,
+    errors: err instanceof HttpException ? err.errors: undefined
   });
 }
