@@ -17,4 +17,5 @@
     "src/**/*.ts",
     "test/**/*.ts",
   ],
+  "files":["src/global.d.ts"]
 }

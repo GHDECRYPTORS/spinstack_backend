@@ -1,33 +1,34 @@
-import * as middlewares from './middlewares';
-import * as mongoose from "mongoose"
-import MessageResponse from './interfaces/MessageResponse';
-import api from './api';
-import cors from 'cors';
-import express from 'express';
-import helmet from 'helmet';
-import morgan from 'morgan';
+import * as middlewares from "./middlewares";
+import * as mongoose from "mongoose";
+import MessageResponse from "./interfaces/MessageResponse";
+import api from "./api";
+import cors from "cors";
+import express from "express";
+import helmet from "helmet";
+import morgan from "morgan";
+import SetUserMiddleware from "./middlewares/setUser.middleware";
 
-require('dotenv').config();
+require("dotenv").config();
 
 const app = express();
 mongoose.connect(process.env.MONGO_URI as string).then(() => {
   console.log("Connected to Database");
 });
-mongoose.set("debug", process.env.NODE_ENV!="production")
+mongoose.set("debug", process.env.NODE_ENV != "production");
 
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
-app.get<{}, MessageResponse>('/', (req, res) => {
+app.get<{}, MessageResponse>("/", (req, res) => {
   res.json({
-    message: '🦄🌈✨👋🌎🌍🌏✨🌈🦄',
+    message: "🦄🌈✨👋🌎🌍🌏✨🌈🦄",
   });
 });
 
-app.use('/api/v1', api);
-
+app.use(SetUserMiddleware);
+app.use("/api/v1", api);
 app.use(middlewares.notFound);
 app.use(middlewares.errorHandler);
 

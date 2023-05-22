@@ -1,4 +1,4 @@
 import { Request } from "express";
-import { UserDocument } from "../models/user.model";
+import { UserI } from "../models/user.model";
 
-export type RequestWithUser = Request & { user: UserDocument };
+export type RequestWithUser = Request & { user?: UserI };

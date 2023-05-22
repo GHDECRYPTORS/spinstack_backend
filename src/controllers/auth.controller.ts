@@ -40,14 +40,13 @@ export const loginRequired = function (
     return res.status(401).json({ message: "Unauthorized user!!" });
   }
 };
-export const profile = function (
-  req: RequestWithUser,
-  res: Response,
-  next: NextFunction
-) {
+export const profile = async function (req: Request, res: Response) {
   if (req.user) {
-    res.send(req.user);
-    next();
+    console.log(req.user)
+    return res.status(200).json({
+      message: "Profile fetched successfully!!",
+      user: req.user,
+    });
   } else {
     return res.status(401).json({ message: "Invalid token" });
   }

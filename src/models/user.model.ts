@@ -59,8 +59,7 @@ UserSchema.methods.login = function (message:string) {
     user: this.showDetails(),
   };
 };
-
-export type UserDocument = mongoose.Document & {
+export interface UserI{
   full_name: string;
   email: string;
   hash_password?: string;
@@ -69,5 +68,6 @@ export type UserDocument = mongoose.Document & {
   showDetails: () => object;
   login(message:string): object;
 };
+export type UserDocument = mongoose.Document &  UserI
 
 export const User = mongoose.model("User", UserSchema);
