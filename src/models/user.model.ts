@@ -23,6 +23,9 @@ const UserSchema = new Schema(
     hash_password: {
       type: String,
     },
+    encrypted_pk: {
+      type: String,
+    },
     business_id: {
       type: Schema.Types.ObjectId,
       ref: "Business",

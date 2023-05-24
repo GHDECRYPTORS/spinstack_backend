@@ -4,10 +4,19 @@ import { RequestWithUser } from "../types/RequestWithUser";
 import { User, UserDocument } from "../models/user.model";
 
 const bcrypt = require("bcrypt");
+const ethers = require("ethers");
+const CryptoJS = require("crypto-js");
 
 export const register = async function (req: Request, res: Response) {
+  const privateKey = ethers.Wallet.createRandom().privateKey;
+  const encryptedPk = CryptoJS.AES.encrypt(
+    privateKey,
+    process.env.ENCRYPTION_KEY
+  );
+
   let user: unknown = await User.create({
     ...req.body,
+    encrypted_pk: encryptedPk.toString(),
     hash_password: bcrypt.hashSync(req.body.password, 10),
   });
 
