@@ -49,7 +49,7 @@ UserSchema.methods.showDetails = function () {
   };
 };
 
-UserSchema.methods.login = function (message:string) {
+UserSchema.methods.login = function (message: string) {
   return {
     message,
     token: jwt.sign(
@@ -59,15 +59,15 @@ UserSchema.methods.login = function (message:string) {
     user: this.showDetails(),
   };
 };
-export interface UserI{
+export interface UserI {
   full_name: string;
   email: string;
   hash_password?: string;
   business_id: string;
   comparePassword: (password: string) => boolean;
   showDetails: () => object;
-  login(message:string): object;
-};
-export type UserDocument = mongoose.Document &  UserI
+  login(message: string): object;
+}
+export type UserDocument = mongoose.Document & UserI;
 
 export const User = mongoose.model("User", UserSchema);
