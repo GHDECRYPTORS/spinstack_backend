@@ -27,6 +27,21 @@ export function errorHandler(
     message: err.message,
     // stack: process.env.NODE_ENV === "production" ? "🥞" : err.stack,
     status: statusCode,
-    errors: err instanceof HttpException ? err.errors: undefined
+    errors: err instanceof HttpException ? err.errors : undefined,
   });
 }
+
+export const validMongoIds = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id, business_id } = req.params;
+  if (id && !/^[0-9a-fA-F]{24}$/.test(id)) {
+    next("route");
+  }
+  if (business_id && !/^[0-9a-fA-F]{24}$/.test(business_id)) {
+    next("route");
+  }
+  next();
+};

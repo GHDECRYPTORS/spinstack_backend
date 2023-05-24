@@ -9,6 +9,16 @@ const AppSchema = new Schema(
       trim: true,
       required: true,
     },
+    public_key: {
+      type: String,
+      trim: true,
+      required: true,
+    },
+    name: {
+      type: String,
+      trim: true,
+      required: true,
+    },
   },
   {
     timestamps: {
@@ -28,7 +38,9 @@ const BusinessSchema = new Schema(
       required: true,
     },
     apps: [AppSchema],
+    type: { type: String, trim: true, required: false },
     webhook_url: { type: String, trim: true, required: false },
+    user_id: { type: Schema.Types.ObjectId, ref: "User" },
   },
   {
     timestamps: {
@@ -43,7 +55,9 @@ export type AppDocument = mongoose.Document & {
 export type BusinessDocument = mongoose.Document & {
   name: string;
   apps: AppDocument[];
-  webhook_url: string;
+  webhook_url?: string;
+  type?: string;
+  user_id: string;
 };
 
 export const Business = mongoose.model("Business", BusinessSchema);
