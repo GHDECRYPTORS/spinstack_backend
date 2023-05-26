@@ -64,10 +64,10 @@ export const createOrder = async function (req: Request, res: Response) {
     payeeSignatureInfo
   );
 
-  const requestNetwork = new RequestNetwork.RequestNetwork({
-    signatureProvider,
-    useMockStorage: true,
-  });
+  // const requestNetwork = new RequestNetwork.RequestNetwork({
+  //   signatureProvider,
+  //   useMockStorage: true,
+  // });
   // const requestInfo: RequestNetwork.Types.IRequestInfo = {
   //   currency: "REQ",
   //   expectedAmount: "1000000000000000000", // 1 REQ
