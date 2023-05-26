@@ -132,8 +132,10 @@ const requestNetworkFromPK = (privateKey: string) => {
   );
 
   const requestNetwork = new RequestNetwork.RequestNetwork({
+    nodeConnectionConfig: {
+      baseURL: "https://goerli.gateway.request.network/",
+    },
     signatureProvider,
-    useMockStorage: true,
   });
 
   return requestNetwork;
