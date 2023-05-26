@@ -4,13 +4,6 @@ import businessRouter from "../routes/business.routes";
 import express from "express";
 
 const router = express.Router();
-
-router.get<{}, MessageResponse>("/", (req, res) => {
-  res.json({
-    message: "API - 👋🌎🌍🌏",
-  });
-});
-
 router.use("/auth", authRoutes);
 router.use("/business", businessRouter);
 
