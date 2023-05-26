@@ -66,6 +66,7 @@ export interface UserI {
   full_name: string;
   email: string;
   hash_password?: string;
+  encrypted_pk?: string;
   business_id: string;
   comparePassword: (password: string) => boolean;
   showDetails: () => object;

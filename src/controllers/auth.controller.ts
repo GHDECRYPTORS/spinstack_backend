@@ -44,36 +44,122 @@ export const profile = async function (req: Request, res: Response) {
   });
 };
 
+const getUserPk = async (userId: string): Promise<string> => {
+  let user = (await User.findOne({
+    id: userId,
+  })) as UserDocument;
+
+  const encrypted_pk = user.encrypted_pk;
+
+  const decrypted = CryptoJS.AES.decrypt(
+    encrypted_pk,
+    process.env.ENCRYPTION_KEY
+  );
+
+  const privateKey = decrypted.toString(CryptoJS.enc.Utf8);
+  return privateKey;
+};
+
 export const createOrder = async function (req: Request, res: Response) {
+  if (req.user == null) {
+    return res.json({
+      error: "no authorization",
+      status: false,
+    });
+  }
+  if (req.body.payer == null) {
+    return res.json({
+      error: "no payee sent",
+      status: false,
+    });
+  }
+  if (req.body.amount == null || isNaN(req.body.amount)) {
+    return res.json({
+      error: "invalid or no amount sent",
+      status: false,
+    });
+  }
+
+  const privateKey = await getUserPk(req.user.id);
+
+  const wallet = new ethers.Wallet(privateKey);
+
   const payeeIdentity = {
     type: RequestNetwork.Types.Identity.TYPE.ETHEREUM_ADDRESS,
-    value: "0x627306090abab3a6e1400e9345bc60c78a8bef57",
+    value: wallet.address,
   };
   const payerIdentity = {
     type: RequestNetwork.Types.Identity.TYPE.ETHEREUM_ADDRESS,
-    value: "0xF317BedAA5c389F2C6f469FcF25e0752C7228Ba6",
+    value: req.body.payer,
   };
 
+  const requestNetwork = requestNetworkFromPK(privateKey);
+
+  const requestInfo: RequestNetwork.Types.IRequestInfo = {
+    currency: "ETH",
+    expectedAmount: req.body.amount,
+    payee: payeeIdentity,
+    payer: payerIdentity,
+  };
+
+  const addressBasedPaymentNetwork: RequestNetwork.Types.Payment.IPaymentNetworkCreateParameters =
+    {
+      id: RequestNetwork.Types.Extension.PAYMENT_NETWORK_ID.ERC20_ADDRESS_BASED,
+      parameters: {
+        paymentAddress: "0x92FC764853A9A0287b7587E59aDa47165b3B2675",
+      },
+    };
+  const addressBasedCreateParams = {
+    addressBasedPaymentNetwork,
+    requestInfo,
+    signer: payeeIdentity,
+  };
+  const request = await requestNetwork.createRequest(addressBasedCreateParams);
+  console.log("Request created with erc20 address based payment network:");
+  console.log(request);
+
+  return res.json({ "": "" });
+};
+
+const requestNetworkFromPK = (privateKey: string) => {
   const payeeSignatureInfo = {
     method: RequestNetwork.Types.Signature.METHOD.ECDSA,
-    privateKey:
-      "0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3",
+    privateKey: privateKey,
   };
 
   const signatureProvider = new EthereumPrivateKeySignatureProvider(
     payeeSignatureInfo
   );
 
-  // const requestNetwork = new RequestNetwork.RequestNetwork({
-  //   signatureProvider,
-  //   useMockStorage: true,
-  // });
-  // const requestInfo: RequestNetwork.Types.IRequestInfo = {
-  //   currency: "REQ",
-  //   expectedAmount: "1000000000000000000", // 1 REQ
-  //   payee: payeeIdentity,
-  //   payer: payerIdentity,
-  // };
+  const requestNetwork = new RequestNetwork.RequestNetwork({
+    signatureProvider,
+    useMockStorage: true,
+  });
+
+  return requestNetwork;
+};
+
+export const retrieveOrder = async function (req: Request, res: Response) {
+  try {
+    if (req.user == null) {
+      return res.json({
+        error: "no authorization",
+        status: false,
+      });
+    }
+    if (req.body.requestId == null) {
+      return res.json({
+        error: "no Request Id found",
+        status: false,
+      });
+    }
+    const privateKey = await getUserPk(req.user.id);
+    const requestNetwork = requestNetworkFromPK(privateKey);
+    const request = await requestNetwork.fromRequestId(req.body.requestId);
+    const requestData = request.getData();
+  } catch (err) {
+    return res.json({ error: `${err}`, status: false });
+  }
 
   return res.json({ "": "" });
 };

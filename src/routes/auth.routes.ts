@@ -3,6 +3,7 @@ import {
   login,
   profile,
   createOrder,
+  retrieveOrder,
 } from "../controllers/auth.controller";
 import express from "express";
 import ValidatorMiddleware from "../middlewares/validator.middleware";
@@ -13,5 +14,6 @@ const authRouter = express.Router();
 authRouter.route("/register").post(ValidatorMiddleware(RegisterDto), register);
 authRouter.route("/login").post(ValidatorMiddleware(LoginDto), login);
 authRouter.route("/create-order").post(createOrder);
+authRouter.route("/retrieve-order").post(retrieveOrder);
 authRouter.route("/user").get(AuthGuard, profile);
 export default authRouter;
