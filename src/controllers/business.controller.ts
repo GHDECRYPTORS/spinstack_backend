@@ -4,10 +4,19 @@ import { NextFunction, Request, Response } from "express";
 import { RequestWithUser } from "../types/RequestWithUser";
 import mongoose from "mongoose";
 
+const ethers = require("ethers");
+const CryptoJS = require("crypto-js");
 export const create = async function (req: Request, res: Response) {
+  const privateKey = ethers.Wallet.createRandom().privateKey;
+  const encryptedPk = CryptoJS.AES.encrypt(
+    privateKey,
+    process.env.ENCRYPTION_KEY
+  );
+
   let business = await Business.create({
     ...req.body,
     user_id: req.user._id,
+    encrypted_pk: encryptedPk.toString(),
     // add api key secret and public
   });
 
@@ -80,7 +89,7 @@ export const getOne = async function (req: Request, res: Response) {
   let business = await Business.findOne({
     _id: req.params.id,
     user_id: req.user._id,
-  })
+  });
 
   if (!business) {
     return res.status(404).json({
