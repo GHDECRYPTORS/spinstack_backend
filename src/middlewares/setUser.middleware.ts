@@ -1,12 +1,19 @@
-import { NextFunction, Response, Request } from "express";
 import * as jwt from "jsonwebtoken";
+
+import { NextFunction, Request, Response } from "express";
+
 import { UserI } from "../models/user.model";
 
 function SetUserMiddleware(req: Request, res: Response, next: NextFunction) {
   const header = req.headers.authorization;
   if (header) {
     const token = header.split(" ")[1];
-    const user = jwt.verify(token, process.env.JWT_SECRET as string) as UserI;
+    let user: UserI;
+    try {
+      user = jwt.verify(token, process.env.JWT_SECRET as string) as UserI;
+    } catch (error) {
+      return next();
+    }
     req.user = user;
   }
   next();
