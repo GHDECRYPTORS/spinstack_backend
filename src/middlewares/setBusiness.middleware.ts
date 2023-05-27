@@ -10,8 +10,11 @@ function SetBusinessMiddleware(
   const header = req.headers.authorization;
   if (header) {
     const token = header.split(" ")[1];
-    const user = jwt.verify(token, process.env.JWT_SECRET as string) as UserI;
-    req.business = user;
+    const business = jwt.verify(
+      token,
+      process.env.JWT_SECRET as string
+    ) as UserI;
+    req.business = business;
   }
 
   if (req.business == null) {
