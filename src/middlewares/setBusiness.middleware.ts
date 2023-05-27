@@ -1,5 +1,6 @@
 import { NextFunction, Response, Request } from "express";
 import * as jwt from "jsonwebtoken";
+import { BusinessDocument } from "../models/business.model";
 import { UserI } from "../models/user.model";
 
 function SetBusinessMiddleware(
@@ -13,7 +14,7 @@ function SetBusinessMiddleware(
     const business = jwt.verify(
       token,
       process.env.JWT_SECRET as string
-    ) as UserI;
+    ) as BusinessDocument;
     req.business = business;
   }
 
