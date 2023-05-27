@@ -7,8 +7,7 @@ const Schema = mongoose.Schema;
 const OrderSchema = new Schema(
   {
     request_id: {
-      type: Schema.Types.ObjectId,
-      ref: "Request",
+      type: String,
     },
     business_id: {
       type: Schema.Types.ObjectId,
@@ -25,7 +24,7 @@ const OrderSchema = new Schema(
       trim: true,
       default: false,
     },
-    amount: {
+    amount_in_wei: {
       type: Number,
       trim: true,
       required: true,

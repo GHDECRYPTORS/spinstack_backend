@@ -64,10 +64,22 @@ export const order = async function (req: Request, res: Response) {
       addressBasedCreateParams
     );
     console.log("Request created with erc20 address based payment network:");
-    console.log(request);
+    console.log(request.getData().expectedAmount);
 
-    const newOrder = new Order({});
-    res.json(request);
+    const data = request.getData();
+
+    const orderData = {
+      request_id: data.requestId,
+      business_id: req.business._id,
+      status: data.state,
+      amount_in_wei: data.expectedAmount,
+      currency: req.body.currency,
+      meta: data.meta,
+      url: `https://pay.request.network/${data.requestId}`,
+    };
+
+    await new Order(orderData).save();
+    res.json(orderData);
   } catch (err) {
     return res.json({ error: `${err}`, status: false });
   }
