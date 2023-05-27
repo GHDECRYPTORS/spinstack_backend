@@ -1,6 +1,7 @@
 import express from "express";
 import {
   order,
+  retrieveAllOrders,
   retrieveOrder,
   updateOrder,
 } from "../controllers/sdk.controller";
@@ -11,5 +12,6 @@ const sdkRouter = express.Router();
 sdkRouter.use(SetBusinessMiddleware);
 sdkRouter.route("/order").post(ValidatorMiddleware(OrderDto), order);
 sdkRouter.route("/order/:orderId").get(retrieveOrder);
+sdkRouter.route("/orders").get(retrieveAllOrders);
 sdkRouter.route("/order/:orderId").put(updateOrder);
 export default sdkRouter;

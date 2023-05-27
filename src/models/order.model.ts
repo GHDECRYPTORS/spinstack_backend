@@ -19,10 +19,10 @@ const OrderSchema = new Schema(
       required: true,
       default: "pending",
     },
-    processed: {
-      type: Boolean,
+    tx_ref: {
+      type: String,
       trim: true,
-      default: false,
+      required: true,
     },
     amount_in_wei: {
       type: Number,

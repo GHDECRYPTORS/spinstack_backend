@@ -106,6 +106,24 @@ export const retrieveOrder = async function (req: Request, res: Response) {
     return res.json({ error: `${err}`, status: false });
   }
 };
+export const retrieveAllOrders = async function (req: Request, res: Response) {
+  try {
+    if (req.business == null) {
+      return res.json({
+        error: "no authorization",
+        status: false,
+      });
+    }
+
+    const userOrders = await Order.find({
+      business_id: req.business._id,
+    }).select("title amount_in_wei currency id status request_id");
+
+    return res.json(userOrders);
+  } catch (err) {
+    return res.json({ error: `${err}`, status: false });
+  }
+};
 
 export const updateOrder = async function (req: Request, res: Response) {
   try {
