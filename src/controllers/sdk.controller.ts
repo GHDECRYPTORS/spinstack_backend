@@ -70,6 +70,7 @@ export const order = async function (req: Request, res: Response) {
     const data = request.getData();
 
     const orderData = {
+      ...req.body,
       request_id: data.requestId,
       business_id: req.business._id,
       status: data.state,
