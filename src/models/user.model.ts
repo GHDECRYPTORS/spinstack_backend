@@ -23,9 +23,6 @@ const UserSchema = new Schema(
     hash_password: {
       type: String,
     },
-    encrypted_pk: {
-      type: String,
-    },
     business_id: {
       type: Schema.Types.ObjectId,
       ref: "Business",
@@ -66,7 +63,6 @@ export interface UserI {
   full_name: string;
   email: string;
   hash_password?: string;
-  encrypted_pk?: string;
   business_id: string;
   comparePassword: (password: string) => boolean;
   showDetails: () => object;

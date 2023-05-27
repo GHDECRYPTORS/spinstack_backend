@@ -27,6 +27,7 @@ const BusinessSchema = new Schema(
       trim: true,
       required: true,
     },
+    encrypted_pk: { type: String, trim: true },
     apps: [AppSchema],
     webhook_url: { type: String, trim: true, required: false },
   },
@@ -44,6 +45,7 @@ export type BusinessDocument = mongoose.Document & {
   name: string;
   apps: AppDocument[];
   webhook_url: string;
+  encrypted_pk?: string;
 };
 
 export const Business = mongoose.model("Business", BusinessSchema);
