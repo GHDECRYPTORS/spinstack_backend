@@ -1,9 +1,9 @@
 import { NextFunction, Response, Request } from "express";
 import * as jwt from "jsonwebtoken";
-import { BusinessDocument } from "../models/business.model";
+import { Business, BusinessDocument } from "../models/business.model";
 import { UserI } from "../models/user.model";
 
-function SetBusinessMiddleware(
+async function SetBusinessMiddleware(
   req: Request,
   res: Response,
   next: NextFunction
@@ -11,15 +11,17 @@ function SetBusinessMiddleware(
   const header = req.headers.authorization;
   if (header) {
     const token = header.split(" ")[1];
-    const business = jwt.verify(
-      token,
-      process.env.JWT_SECRET as string
-    ) as BusinessDocument;
+    const business = (await Business.findOne({
+      api_key: token,
+    })) as BusinessDocument;
+    if (!business) {
+      return res.status(401).json({
+        message: "Unauthorized",
+        data: {},
+        status: false,
+      });
+    }
     req.business = business;
-  }
-
-  if (req.business == null) {
-    throw Error("Invalid business api key");
   }
   next();
 }

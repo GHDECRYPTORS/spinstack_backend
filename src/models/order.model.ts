@@ -18,7 +18,7 @@ const OrderSchema = new Schema(
       type: String,
       trim: true,
       required: true,
-      default: 'pending'
+      default: "pending",
     },
     processed: {
       type: Boolean,
@@ -52,7 +52,6 @@ export type OrderDocument = mongoose.Document & {
   business_id: string;
   status: string;
   processed: string;
-
 };
 
 export const Order = mongoose.model("Order", OrderSchema);
