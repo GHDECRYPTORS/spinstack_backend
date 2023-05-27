@@ -27,7 +27,7 @@ const getUserPk = async (userId: string): Promise<string> => {
 };
 
 export const order = async function (req: Request, res: Response) {
-  if (req.user == null) {
+  if (req.business == null) {
     return res.json({
       error: "no authorization",
       status: false,
