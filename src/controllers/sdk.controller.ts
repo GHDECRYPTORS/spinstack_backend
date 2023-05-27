@@ -27,64 +27,71 @@ const getUserPk = async (userId: string): Promise<string> => {
 };
 
 export const order = async function (req: Request, res: Response) {
-  if (req.business == null) {
-    return res.json({
-      error: "no authorization",
-      status: false,
-    });
-  }
-  if (req.body.payer == null) {
-    return res.json({
-      error: "no payee sent",
-      status: false,
-    });
-  }
-  if (req.body.amountInWei == null || isNaN(req.body.amountInWei)) {
-    return res.json({
-      error: "invalid or no amount sent",
-      status: false,
-    });
-  }
+  try {
+    if (req.business == null) {
+      return res.json({
+        error: "no authorization",
+        status: false,
+      });
+    }
+    if (req.body.payer == null) {
+      return res.json({
+        error: "no payee sent",
+        status: false,
+      });
+    }
+    if (req.body.amountInWei == null || isNaN(req.body.amountInWei)) {
+      return res.json({
+        error: "invalid or no amount sent",
+        status: false,
+      });
+    }
 
-  const privateKey = await getUserPk(req.user.id);
+    const privateKey = await getUserPk(req.user.id);
 
-  const wallet = new ethers.Wallet(privateKey);
+    const wallet = new ethers.Wallet(privateKey);
 
-  const payeeIdentity = {
-    type: RequestNetwork.Types.Identity.TYPE.ETHEREUM_ADDRESS,
-    value: wallet.address,
-  };
-
-  const payerIdentity = {
-    type: RequestNetwork.Types.Identity.TYPE.ETHEREUM_ADDRESS,
-    value: req.body.payer,
-  };
-
-  const requestNetwork = requestNetworkFromPK(privateKey);
-
-  const requestInfo: RequestNetwork.Types.IRequestInfo = {
-    currency: "ETH",
-    expectedAmount: req.body.amountInWei,
-    payee: payeeIdentity,
-    payer: payerIdentity,
-  };
-
-  const addressBasedPaymentNetwork: RequestNetwork.Types.Payment.IPaymentNetworkCreateParameters =
-    {
-      id: RequestNetwork.Types.Extension.PAYMENT_NETWORK_ID.ERC20_ADDRESS_BASED,
-      parameters: {
-        paymentAddress: "0x92FC764853A9A0287b7587E59aDa47165b3B2675",
-      },
+    const payeeIdentity = {
+      type: RequestNetwork.Types.Identity.TYPE.ETHEREUM_ADDRESS,
+      value: wallet.address,
     };
-  const addressBasedCreateParams = {
-    addressBasedPaymentNetwork,
-    requestInfo,
-    signer: payeeIdentity,
-  };
-  const request = await requestNetwork.createRequest(addressBasedCreateParams);
-  console.log("Request created with erc20 address based payment network:");
-  console.log(request);
-  res.json({});
+
+    const payerIdentity = {
+      type: RequestNetwork.Types.Identity.TYPE.ETHEREUM_ADDRESS,
+      value: req.body.payer,
+    };
+
+    const requestNetwork = requestNetworkFromPK(privateKey);
+
+    const requestInfo: RequestNetwork.Types.IRequestInfo = {
+      currency: "ETH",
+      expectedAmount: req.body.amountInWei,
+      payee: payeeIdentity,
+      payer: payerIdentity,
+    };
+
+    const addressBasedPaymentNetwork: RequestNetwork.Types.Payment.IPaymentNetworkCreateParameters =
+      {
+        id: RequestNetwork.Types.Extension.PAYMENT_NETWORK_ID
+          .ERC20_ADDRESS_BASED,
+        parameters: {
+          paymentAddress: "0x92FC764853A9A0287b7587E59aDa47165b3B2675",
+        },
+      };
+    const addressBasedCreateParams = {
+      addressBasedPaymentNetwork,
+      requestInfo,
+      signer: payeeIdentity,
+    };
+    const request = await requestNetwork.createRequest(
+      addressBasedCreateParams
+    );
+    console.log("Request created with erc20 address based payment network:");
+    console.log(request);
+    res.json({});
+  } catch (err) {
+    return res.json({ error: `${err}`, status: false });
+  }
 };
 
 export const retrieveOrder = async function (req: Request, res: Response) {
