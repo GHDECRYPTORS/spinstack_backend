@@ -9,6 +9,7 @@ const CryptoJS = require("crypto-js");
 import { EthereumPrivateKeySignatureProvider } from "@requestnetwork/epk-signature";
 import * as RequestNetwork from "@requestnetwork/request-client.js";
 import { BusinessDocument } from "../models/business.model";
+import { Order } from "../models/order.model";
 
 const decryptPk = async (encrypted_pk: string): Promise<string> => {
   const decrypted = CryptoJS.AES.decrypt(
@@ -64,6 +65,8 @@ export const order = async function (req: Request, res: Response) {
     );
     console.log("Request created with erc20 address based payment network:");
     console.log(request);
+
+    const newOrder = new Order({});
     res.json(request);
   } catch (err) {
     return res.json({ error: `${err}`, status: false });
