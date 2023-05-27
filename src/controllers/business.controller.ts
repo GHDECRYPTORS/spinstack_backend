@@ -13,6 +13,17 @@ export const create = async function (req: Request, res: Response) {
     process.env.ENCRYPTION_KEY
   );
 
+  let businesses = await Business.find({
+    user_id: req.user._id,
+  });
+  if (businesses.length != 0) {
+    return res.json({
+      data: null,
+      message: "User already have an existing business",
+      status: false,
+    });
+  }
+
   let business = await Business.create({
     ...req.body,
     user_id: req.user._id,

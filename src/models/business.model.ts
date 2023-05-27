@@ -1,33 +1,17 @@
 import * as mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-// App schema
-// const AppSchema = new Schema(
-//   {
-//     name: {
-//       type: String,
-//       trim: true,
-//       required: true,
-//     },
-//     public_key: {
-//       type: String,
-//       trim: true,
-//       required: true,
-//     },
-//   },
-//   {
-//     timestamps: {
-//       createdAt: "created_at",
-//       updatedAt: "updated_at",
-//     },
-//   }
-// );
 /**
  * Business Schema
  */
 const BusinessSchema = new Schema(
   {
     name: {
+      type: String,
+      trim: true,
+      required: true,
+    },
+    type: {
       type: String,
       trim: true,
       required: true,
@@ -49,6 +33,7 @@ const BusinessSchema = new Schema(
 export type BusinessDocument = mongoose.Document & {
   name: string;
   webhook_url: string;
+  type: string;
   encrypted_pk?: string;
 };
 
