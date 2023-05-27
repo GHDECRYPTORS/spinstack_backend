@@ -43,15 +43,19 @@ export const order = async function (req: Request, res: Response) {
     const requestNetwork = requestNetworkFromPK(privateKey);
 
     const requestInfo: RequestNetwork.Types.IRequestInfo = {
-      currency: "ETH",
+      currency: {
+        type: RequestNetwork.Types.RequestLogic.CURRENCY.ETH,
+        value: "ETH",
+        network: "goerli",
+      },
+
       expectedAmount: req.body.amount_in_wei,
       payee: payeeIdentity,
     };
 
     const addressBasedPaymentNetwork: RequestNetwork.Types.Payment.IPaymentNetworkCreateParameters =
       {
-        id: RequestNetwork.Types.Extension.PAYMENT_NETWORK_ID
-          .ERC20_ADDRESS_BASED,
+        id: RequestNetwork.Types.Extension.PAYMENT_NETWORK_ID.NATIVE_TOKEN,
         parameters: {},
       };
     const addressBasedCreateParams = {
