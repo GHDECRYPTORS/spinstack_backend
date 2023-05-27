@@ -17,6 +17,7 @@ const BusinessSchema = new Schema(
       required: true,
     },
     encrypted_pk: { type: String, trim: true },
+    api_key: { type: String, trim: true },
     webhook_url: { type: String, trim: true, required: false },
     user_id: { type: Schema.Types.ObjectId, ref: "User" },
   },
@@ -33,6 +34,7 @@ const BusinessSchema = new Schema(
 export type BusinessDocument = mongoose.Document & {
   name: string;
   webhook_url: string;
+  api_key: string;
   type: string;
   encrypted_pk?: string;
 };

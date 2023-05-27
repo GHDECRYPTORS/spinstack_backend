@@ -6,6 +6,14 @@ import mongoose from "mongoose";
 
 const ethers = require("ethers");
 const CryptoJS = require("crypto-js");
+const crypto = require("crypto");
+
+function generateRandomApiKey() {
+  const apiKeyLength = 13;
+  const hash = crypto.randomUUID();
+  return `pub-${hash}`;
+}
+
 export const create = async function (req: Request, res: Response) {
   const privateKey = ethers.Wallet.createRandom().privateKey;
   const encryptedPk = CryptoJS.AES.encrypt(
@@ -27,12 +35,14 @@ export const create = async function (req: Request, res: Response) {
   let business = await Business.create({
     ...req.body,
     user_id: req.user._id,
+    api_key: generateRandomApiKey(),
     encrypted_pk: encryptedPk.toString(),
     // add api key secret and public
   });
+  const { encrypted_pk, ...details } = business.toJSON();
 
   return res.json({
-    data: business.toJSON(),
+    data: details,
     message: "Business created successfully!!",
   });
 };
