@@ -2,6 +2,7 @@ import { Business, BusinessDocument } from "../models/business.model";
 import { NextFunction, Request, Response } from "express";
 
 import { RequestWithUser } from "../types/RequestWithUser";
+import { User } from "../models/user.model";
 import mongoose from "mongoose";
 
 const ethers = require("ethers");
@@ -39,6 +40,18 @@ export const create = async function (req: Request, res: Response) {
     encrypted_pk: encryptedPk.toString(),
     // add api key secret and public
   });
+
+  // update user, set business id
+  await User.updateOne(
+    {
+      _id: req.user._id,
+    },
+    {
+      $set: {
+        business_id: business._id,
+      },
+    }
+  );
   const { encrypted_pk, ...details } = business.toJSON();
 
   return res.json({

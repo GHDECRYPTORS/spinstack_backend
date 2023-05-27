@@ -45,7 +45,7 @@ UserSchema.methods.showDetails = function () {
     _id: this._id,
     full_name: this.full_name,
     email: this.email,
-    business_id: this.business_id,
+    business_id: this.business_id ?? null
   };
 };
 
