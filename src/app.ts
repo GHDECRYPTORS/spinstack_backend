@@ -1,12 +1,13 @@
 import * as middlewares from "./middlewares";
 import * as mongoose from "mongoose";
+
 import MessageResponse from "./interfaces/MessageResponse";
+import SetUserMiddleware from "./middlewares/setUser.middleware";
 import api from "./api";
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
-import SetUserMiddleware from "./middlewares/setUser.middleware";
 
 require("dotenv").config();
 
@@ -28,8 +29,9 @@ app.get<{}, MessageResponse>("/", (req, res) => {
 });
 
 app.use(SetUserMiddleware);
+// allow only mongo ids on route params named id
+app.use(middlewares.validMongoIds);
 app.use("/api/v1", api);
 app.use(middlewares.notFound);
 app.use(middlewares.errorHandler);
-
 export default app;

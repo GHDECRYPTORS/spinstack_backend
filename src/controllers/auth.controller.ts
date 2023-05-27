@@ -1,24 +1,17 @@
-import { NextFunction, Request, Response } from "express";
-
-import { RequestWithUser } from "../types/RequestWithUser";
-import { User, UserDocument } from "../models/user.model";
-
-const bcrypt = require("bcrypt");
-const ethers = require("ethers");
-const CryptoJS = require("crypto-js");
-import { EthereumPrivateKeySignatureProvider } from "@requestnetwork/epk-signature";
 import * as RequestNetwork from "@requestnetwork/request-client.js";
 
-export const register = async function (req: Request, res: Response) {
-  const privateKey = ethers.Wallet.createRandom().privateKey;
-  const encryptedPk = CryptoJS.AES.encrypt(
-    privateKey,
-    process.env.ENCRYPTION_KEY
-  );
+import { NextFunction, Request, Response } from "express";
+import { User, UserDocument } from "../models/user.model";
 
+import { EthereumPrivateKeySignatureProvider } from "@requestnetwork/epk-signature";
+import { RequestWithUser } from "../types/RequestWithUser";
+
+const bcrypt = require("bcrypt");
+
+
+export const register = async function (req: Request, res: Response) {
   let user: unknown = await User.create({
     ...req.body,
-    encrypted_pk: encryptedPk.toString(),
     hash_password: bcrypt.hashSync(req.body.password, 10),
   });
 
