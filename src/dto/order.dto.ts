@@ -10,6 +10,7 @@ import {
   IsUrl,
   IsObject,
   ValidateNested,
+  IsNumberString,
 } from "class-validator";
 
 import { Type } from "class-transformer";
@@ -18,7 +19,7 @@ export class OrderDto {
   @IsNotEmpty()
   tx_ref: string;
 
-  @IsNumber()
+  @IsNumberString()
   amount_in_wei: number;
 
   @IsIn(["ETH"])

@@ -10,6 +10,7 @@ import { EthereumPrivateKeySignatureProvider } from "@requestnetwork/epk-signatu
 import * as RequestNetwork from "@requestnetwork/request-client.js";
 import { BusinessDocument } from "../models/business.model";
 import { Order } from "../models/order.model";
+import { request } from "http";
 
 const decryptPk = async (encrypted_pk: string): Promise<string> => {
   const decrypted = CryptoJS.AES.decrypt(
@@ -51,9 +52,7 @@ export const order = async function (req: Request, res: Response) {
       {
         id: RequestNetwork.Types.Extension.PAYMENT_NETWORK_ID
           .ERC20_ADDRESS_BASED,
-        parameters: {
-          paymentAddress: "0x92FC764853A9A0287b7587E59aDa47165b3B2675",
-        },
+        parameters: {},
       };
     const addressBasedCreateParams = {
       addressBasedPaymentNetwork,
@@ -63,8 +62,6 @@ export const order = async function (req: Request, res: Response) {
     const request = await requestNetwork.createRequest(
       addressBasedCreateParams
     );
-    console.log("Request created with erc20 address based payment network:");
-    console.log(request.getData().expectedAmount);
 
     const data = request.getData();
 
@@ -75,7 +72,7 @@ export const order = async function (req: Request, res: Response) {
       amount_in_wei: data.expectedAmount,
       currency: req.body.currency,
       meta: data.meta,
-      url: `https://pay.request.network/${data.requestId}`,
+      url: `${process.env.REQUEST_URL}/${data.requestId}`,
     };
 
     await new Order(orderData).save();
@@ -87,28 +84,60 @@ export const order = async function (req: Request, res: Response) {
 
 export const retrieveOrder = async function (req: Request, res: Response) {
   try {
-    if (req.user == null) {
+    if (req.business == null) {
       return res.json({
         error: "no authorization",
         status: false,
       });
     }
-    if (req.body.requestId == null) {
-      return res.json({
-        error: "no Request Id found",
-        status: false,
-      });
-    }
-    const privateKey = await decryptPk(req.user.id);
-    const requestNetwork = requestNetworkFromPK(privateKey);
-    const request = await requestNetwork.fromRequestId(req.body.requestId);
-    const requestData = request.getData();
-    console.log(requestData);
+
+    const userOrders = await Order.findOne({
+      request_id: req.params.orderId,
+      business_id: req.business._id,
+    });
+
+    return res.json(userOrders);
   } catch (err) {
     return res.json({ error: `${err}`, status: false });
   }
+};
 
-  return res.json({ "": "" });
+export const updateOrder = async function (req: Request, res: Response) {
+  try {
+    if (req.business == null) {
+      return res.json({
+        error: "no authorization",
+        status: false,
+      });
+    }
+
+    const userOrders = await Order.findOne({
+      request_id: req.params.orderId,
+      business_id: req.business._id,
+    });
+
+    const privateKey = await decryptPk(req.business.encrypted_pk);
+
+    const requestNetwork = requestNetworkFromPK(privateKey);
+    const request = await requestNetwork.fromRequestId(req.params.orderId);
+    const data = request.getData();
+
+    const orderData = {
+      request_id: data.requestId,
+      business_id: req.business._id,
+      status: data.state,
+      amount_in_wei: data.expectedAmount,
+      currency: req.body.currency,
+      meta: data.meta,
+      url: `${process.env.REQUEST_URL}/${data.requestId}`,
+    };
+
+    await userOrders?.updateOne(orderData);
+
+    return res.json(orderData);
+  } catch (err) {
+    return res.json({ error: `${err}`, status: false });
+  }
 };
 
 const requestNetworkFromPK = (privateKey: string) => {

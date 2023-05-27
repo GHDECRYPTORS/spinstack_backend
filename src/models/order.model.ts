@@ -34,6 +34,11 @@ const OrderSchema = new Schema(
       trim: true,
       required: true,
     },
+    url: {
+      type: String,
+      trim: true,
+      required: true,
+    },
     meta: {
       type: Object,
     },
