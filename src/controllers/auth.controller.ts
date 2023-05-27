@@ -8,12 +8,20 @@ import { RequestWithUser } from "../types/RequestWithUser";
 
 const bcrypt = require("bcrypt");
 
-
 export const register = async function (req: Request, res: Response) {
-  let user: unknown = await User.create({
-    ...req.body,
-    hash_password: bcrypt.hashSync(req.body.password, 10),
-  });
+  let user: unknown;
+  try {
+    user = await User.create({
+      ...req.body,
+      hash_password: bcrypt.hashSync(req.body.password, 10),
+    });
+  } catch (err: any) {
+    return res.status(400).json({
+      message: "User exists",
+      errors: [err.message],
+      data: {},
+    });
+  }
 
   let _user = user as UserDocument;
   return res.json(_user.login("Signed up successfully"));
