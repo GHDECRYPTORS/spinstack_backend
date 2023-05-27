@@ -54,6 +54,7 @@ export const order = async function (req: Request, res: Response) {
     type: RequestNetwork.Types.Identity.TYPE.ETHEREUM_ADDRESS,
     value: wallet.address,
   };
+
   const payerIdentity = {
     type: RequestNetwork.Types.Identity.TYPE.ETHEREUM_ADDRESS,
     value: req.body.payer,
