@@ -96,10 +96,17 @@ export const retrieveOrder = async function (req: Request, res: Response) {
       });
     }
 
-    const userOrders = await Order.findOne({
+    let userOrders = await Order.findOne({
       request_id: req.params.orderId,
       business_id: req.business._id,
     });
+
+    if (userOrders == null) {
+      userOrders = await Order.findOne({
+        _id: req.params.orderId,
+        business_id: req.business._id,
+      });
+    }
 
     return res.json(userOrders);
   } catch (err) {
