@@ -39,8 +39,8 @@ export const login = async function (req: Request, res: Response) {
   return res.json(user.login("Logged in successfully"));
 };
 export const profile = async function (req: Request, res: Response) {
-  return res.status(200).json({
-    message: "Profile fetched successfully!!",
-    user: req.user,
-  });
+  let user = (await User.findOne({
+    email: req.user.email,
+  })) as UserDocument;
+  return res.status(200).json( user.login("Profile fetched successfully!!"));
 };
