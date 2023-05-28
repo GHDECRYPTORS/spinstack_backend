@@ -1,12 +1,6 @@
 # Spinstack Payment System
 
-The Spinstack Payment System is a payment system that leverages the Gnosis Request API to create, update, and delete orders. This system provides a convenient way to manage payment orders and interact with the Gnosis Request API for seamless payment processing.
-
-## Features
-
-- Create a payment order: Users can create payment orders by providing necessary details such as transaction reference, amount, currency, and customer information.
-- Update a payment order: Users can update an existing payment order by specifying the order ID and providing updated information.
-- Delete a payment order: Users can delete a payment order by specifying the order ID.
+The Spinstack Payment Protocol is a robust and innovative blockchain-powered payment gateway that harnesses the cutting-edge technology of the RequestNetwork. Designed to facilitate seamless and secure transactions, the Spinstack Payment System offers a range of features and functionalities that make it a versatile solution for businesses and individuals alike.
 
 ## Installation
 
